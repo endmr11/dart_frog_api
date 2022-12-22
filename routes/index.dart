@@ -7,8 +7,9 @@ Future<Response> onRequest(RequestContext context) async {
   final dbManager = DbManager();
   final socketManager = SocketManager();
   final dbConnection = await dbManager.initDb();
+  print('initDb $dbConnection');
   if (!dbConnection) {
-    return Response(body: 'DB Error!'); 
+    return Response(statusCode: 404,body: 'DB Error!'); 
   }
   await socketManager.initSocket();
   return Response(body: 'Welcome to Dart Frog!');

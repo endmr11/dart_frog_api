@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:postgres/postgres.dart';
@@ -5,25 +6,33 @@ import 'package:postgres/postgres.dart';
 class DbManager {
   static PostgreSQLConnection? connection;
   Future<bool> initDb() async {
-    try {
-      connection = PostgreSQLConnection('127.0.0.1', 5432, 'orderdb', username: 'postgres', password: '123456789');
-      await connection?.open();
-      return true;
-    } catch (e) {
-      return false;
-    }
+    final completer = Completer<bool>();
+    connection = PostgreSQLConnection('127.0.0.1', 5432, 'orderdb', username: 'postgres', password: '123456789');
+    await connection?.open().then((value) {
+      print('connection open $value');
+      completer.complete(true);
+    }).onError((error, stackTrace) {
+      print(error);
+      completer.complete(false);
+    });
+
+    return completer.future;
   }
 
   Future<bool> userExist(String email, String password) async {
-    try {
+    print('userExist: $connection');
+    if (connection != null) {
+      print('userExist2: $connection');
       final List<List<dynamic>> results =
           await connection!.query('SELECT user_password FROM users WHERE user_email = @userEmailValue', substitutionValues: {'userEmailValue': email});
+      print('userExist3: $results');
       if (results.first.first is String && results.first.first as String == password) {
         return true;
       } else {
         return false;
       }
-    } catch (e) {
+    }else{
+      print('connection null');
       return false;
     }
   }

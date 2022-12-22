@@ -1,5 +1,7 @@
 // ignore_for_file: cascade_invocations
 
+import 'dart:developer';
+
 import 'package:socket_io_client/socket_io_client.dart' as io;
 
 class SocketManager {
@@ -12,9 +14,9 @@ class SocketManager {
       socket..onConnect((_) {
         socket.emit('isConnected', 'yes');
       })
-      ..on('connectionStatus', (_) => print('Result => $_'));
+      ..on('connectionStatus', (_) => log('Result => $_'));
     } catch (e) {
-      print(e.toString());
+      log(e.toString());
     }
   }
 
@@ -22,9 +24,9 @@ class SocketManager {
     if (socket.connected) {
       try {
         socket.emit('createOrderSend', data);
-        socket.on('createOrderResponse', (_) => print('Result => $_'));
+        socket.on('createOrderResponse', (_) => log('Result => $_'));
       } catch (e) {
-        print(e.toString());
+        log(e.toString());
       }
     }
   }
@@ -33,9 +35,9 @@ class SocketManager {
     if (socket.connected) {
       try {
         socket.emit('updateOrderSend', data);
-        socket.on('updateOrderResponse', (_) => print('Result => $_'));
+        socket.on('updateOrderResponse', (_) => log('Result => $_'));
       } catch (e) {
-        print(e.toString());
+        log(e.toString());
       }
     }
   }
@@ -44,9 +46,9 @@ class SocketManager {
     if (socket.connected) {
       try {
         socket.emit('deleteOrderSend', data);
-        socket.on('deleteOrderResponse', (_) => print('Result => $_'));
+        socket.on('deleteOrderResponse', (_) => log('Result => $_'));
       } catch (e) {
-        print(e.toString());
+        log(e.toString());
       }
     }
   }
