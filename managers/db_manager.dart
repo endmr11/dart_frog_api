@@ -13,7 +13,7 @@ class DbManager {
       completer.complete(true);
     }).onError((error, stackTrace) {
       print(error);
-      completer.complete(false);
+      completer.completeError(error.toString());
     });
 
     return completer.future;

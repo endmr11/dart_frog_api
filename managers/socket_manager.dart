@@ -1,5 +1,6 @@
 // ignore_for_file: cascade_invocations
 
+import 'dart:async';
 import 'dart:developer';
 
 import 'package:socket_io_client/socket_io_client.dart' as io;
@@ -9,15 +10,25 @@ class SocketManager {
     'transports': ['websocket'],
   });
 
-  Future<void> initSocket() async {
+  Future<bool> initSocket() async {
+    final completer = Completer<bool>();
     try {
       socket..onConnect((_) {
         socket.emit('isConnected', 'yes');
+        completer.complete(true);
       })
-      ..on('connectionStatus', (_) => log('Result => $_'));
+      ..on('connectionStatus', (_) => log('Result => $_'))
+          ..onConnectError((data){
+            completer.completeError(data.toString());
+          })
+          ..onConnectTimeout((data){
+            completer.completeError(data.toString());
+          });
     } catch (e) {
       log(e.toString());
+      completer.completeError(e.toString());
     }
+    return completer.future;
   }
 
   Future<void> createOrderSend(dynamic data) async {
